@@ -43,7 +43,7 @@ const fetchUserData = useCallback(async () => {
     // First, get the current user's info using getCurrentUser
     console.log("Fetching current user info...");
     try {
-      const currentUserResponse = await api.get('/api/me');
+      const currentUserResponse = await userService.get('/api/me');
       const userInfo = currentUserResponse.data;
       console.log("Current user info fetched:", userInfo);
       setCurrentUserInfo(userInfo);

@@ -1,22 +1,35 @@
 // src/services/storyService.js
 import api from './api';
-
+// import { normalizeData } from '../utils/dataUtils';
 // Helper function to normalize MongoDB _id to id for frontend
 const normalizeData = (data) => {
-  if (!data) return null;
-  
-  if (Array.isArray(data)) {
-    return data.map(item => ({
-      id: item._id || item.id,
-      ...item,
-    }));
-  }
-  
-  return {
-    id: data._id || data.id,
-    ...data
+    // If no data or error response, return empty array
+    if (!data || data.status === 'error') {
+      return [];
+    }
+    
+    // Check all possible locations where posts could be
+    if (data.status === 'success' && data.data && Array.isArray(data.data.posts)) {
+      // Standard format: { status: 'success', data: { posts: [...] } }
+      return data.data.posts;
+    } 
+    else if (Array.isArray(data)) {
+      // Direct array format
+      return data;
+    } 
+    else if (data.data && Array.isArray(data.data)) {
+      // Data property contains array: { data: [...] }
+      return data.data;
+    } 
+    else if (data.posts && Array.isArray(data.posts)) {
+      // Direct posts property: { posts: [...] }
+      return data.posts;
+    }
+    
+    // Return empty array if no recognized format
+    return [];
   };
-};
+  
 
 const storyService = {
   // Create new story
